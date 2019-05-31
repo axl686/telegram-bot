@@ -11,17 +11,6 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Regex
 
 import settings
 
-PROXY = {
-    'proxy_url': 'socks5://t1.learn.python.ru:1080',
-    'urllib3_proxy_kwargs': {
-        'username': 'learn', 
-        'password': 'python'
-    }
-}
-
-API_KEY = "886440728:AAEWAxQ7haqJ3wjvQZJZe6Sv4Q2NUsLsC7Y"   
-
-USER_EMOJI = [':smiley_cat:', ':smiling_imp:', ':panda_face:', ':dog:']
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
@@ -36,22 +25,22 @@ def greet_user(bot, update, user_data):
 
 def talk_to_me(bot, update, user_data):
     emo = get_user_emo(user_data)
-    user_text = "Привет {}! Ты написал: {}".format(update.message.chat.first_name, emo, update.message.text)
+    user_text = "Привет, {}! {} Ты написал: {}".format(update.message.chat.first_name, emo, update.message.text)
     logging.info("User: %s, Chat id: %s, Message: %s", update.message.chat.username, 
                         update.message.chat.id, update.message.text)
     update.message.reply_text(user_text, reply_markup=get_keyboard())
 
 def get_const_planet(bot, update, user_data):
-    planet = split(text)[1]
-    print(text)
-    print(planet)
+    planet = update.message.text.split()[1]
     planets_list = [name for _0, _1, name in ephem._libastro.builtin_planets()]
     
     if planet in planets_list:
-      pl = ephem.planet(now.strftime("%Y/%m/%d"))
+      pl = getattr(ephem, planet)(datetime.datetime.today().strftime('%Y-%m-%d'))
       const = ephem.constellation(pl)
       print(const)
       update.message.reply_text(const, reply_markup=get_keyboard())
+    else:
+      update.message.reply_text('There is no planet {}'.format(planet), reply_markup=get_keyboard())
 
 def get_car_picture(bot, update, user_data):
     car_list = glob('images/*.jp*g')
@@ -61,18 +50,15 @@ def get_car_picture(bot, update, user_data):
 def change_avatar(bot, update, user_data):
     if 'emo' in user_data:
         del user_data['emo']
-    emo = get_user_emo(user_data)
-    update.message.reply_text('Done:'.format(emo), reply_markup=get_keyboard())
+    update.message.reply_text('Done! {}'.format(get_user_emo(user_data)), reply_markup=get_keyboard())
 
 def get_contact(bot, update, user_data):
     print(update.message.contact)
-    emo = get_user_emo(user_data)
-    update.message.reply_text('Done:'.format(emo), reply_markup=get_keyboard())
+    update.message.reply_text('Done! {}'.format(get_user_emo(user_data)), reply_markup=get_keyboard())
 
-def get_location(bot, message, user_data):
+def get_location(bot, update, user_data):
     print(update.message.location)
-    emo = get_user_emo(user_data)
-    update.message.reply_text('Done:'.format(emo), reply_markup=get_keyboard())
+    update.message.reply_text('Done! {}'.format(get_user_emo(user_data)), reply_markup=get_keyboard())
 
 def get_user_emo(user_data):
     if 'emo' in user_data:
@@ -85,7 +71,7 @@ def get_keyboard():
     contact_button = KeyboardButton('Send contacts', request_contact=True)
     location_button = KeyboardButton('Send coordinates', request_location=True)
     my_keyboard = ReplyKeyboardMarkup([
-                                        ['Прислать тачку', 'Сменить аватар']
+                                        ['Прислать тачку', 'Сменить аватар'],
                                         [contact_button, location_button]
                                        ], resize_keyboard=True
                                     )
@@ -104,7 +90,7 @@ def main():
 
     dp.add_handler(MessageHandler(Filters.contact, get_contact, pass_user_data=True))
     dp.add_handler(MessageHandler(Filters.location, get_location, pass_user_data=True))
-    dp.add_handler(MessageHandler(Filters.text, talk_to_me))
+    dp.add_handler(MessageHandler(Filters.text, talk_to_me, pass_user_data=True))
     
     mybot.start_polling()
     mybot.idle()
