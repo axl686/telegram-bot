@@ -11,18 +11,6 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Regex
 
 import settings
 
-PROXY = {
-    'proxy_url': 'socks5://t1.learn.python.ru:1080',
-    'urllib3_proxy_kwargs': {
-        'username': 'learn', 
-        'password': 'python'
-    }
-}
-
-API_KEY = "886440728:AAEWAxQ7haqJ3wjvQZJZe6Sv4Q2NUsLsC7Y"   
-
-USER_EMOJI = [':smiley_cat:', ':smiling_imp:', ':panda_face:', ':dog:']
-
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
                     filename='bot.log'
@@ -31,12 +19,12 @@ logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
 def greet_user(bot, update, user_data):
     emo = emojize(choice(settings.USER_EMOJI), use_aliases=True)
     user_data['emo'] = emo
-    text = 'Привет {}'.format(emo)
+    text = 'Hi there {}'.format(emo)
     update.message.reply_text(text, reply_markup=get_keyboard())
 
 def talk_to_me(bot, update, user_data):
     emo = get_user_emo(user_data)
-    user_text = "Привет {}! Ты написал: {}".format(update.message.chat.first_name, emo, update.message.text)
+    user_text = "Hey, you {}! Did you say about my mama: {}?".format(update.message.chat.first_name, emo, update.message.text)
     logging.info("User: %s, Chat id: %s, Message: %s", update.message.chat.username, 
                         update.message.chat.id, update.message.text)
     update.message.reply_text(user_text, reply_markup=get_keyboard())
@@ -85,7 +73,7 @@ def get_keyboard():
     contact_button = KeyboardButton('Send contacts', request_contact=True)
     location_button = KeyboardButton('Send coordinates', request_location=True)
     my_keyboard = ReplyKeyboardMarkup([
-                                        ['Прислать тачку', 'Сменить аватар']
+                                        ['Send me a cool car', 'Change avatar']
                                         [contact_button, location_button]
                                        ], resize_keyboard=True
                                     )
