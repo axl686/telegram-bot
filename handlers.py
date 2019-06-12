@@ -1,10 +1,11 @@
 import datetime
 import logging
+import os
 
 import ephem
 from glob import glob
 from random import choice
-from utils import get_user_emo, get_keyboardimport
+from utils import get_user_emo, get_keyboardimport, is_car
 
 import settings
 
@@ -53,3 +54,16 @@ def get_location(bot, message, user_data):
     print(update.message.location)
     emo = get_user_emo(user_data)
     update.message.reply_text('Done:'.format(emo), reply_markup=get_keyboard())
+
+def check_user_photo(bot, update, user_data):
+    update.message.reply_text('Checking photo')
+    os.makedirs('downloads', exist_ok=True)
+    photo_file = bot.getFile(update.message.photo[-1].file_id)
+    filename = os.path.join('downloads', '{}.jpg'.fotmat(photo_file.file_id))
+    if is_car(filename):
+        update.message.reply_text('It is a car! It was added in storage')
+        new_filename = os.path.join('images', 'car_{}.jpg'.format(photo_file.file_id))
+        os.rename(filename, new_filename)
+    else:
+        os.remove(filename)
+        update.message.reply_text('Phhh... It is not a car!')
