@@ -20,7 +20,7 @@ def get_keyboard():
     location_button = KeyboardButton('Send coordinates', request_location=True)
     my_keyboard = ReplyKeyboardMarkup(
                                         [
-                                            ['Send me a cool car', 'Change avatar']
+                                            ['Send me a cool car', 'Change avatar'],
                                             [contact_button, location_button]
                                         ], resize_keyboard=True
                                     )
@@ -33,7 +33,7 @@ def is_car(file_name):
     model = app.public_models.general_model
     response = model.predict_by_filename(file_name, max_concepts=5)
     if response['status']['code'] == 10000:
-        for concept in response['outpets'][0]['data']['concepts']:
+        for concept in response['outputs'][0]['data']['concepts']:
             if concept['name'] == 'car':
                 image_has_car = True
     return image_has_car
