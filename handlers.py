@@ -5,9 +5,11 @@ import os
 import ephem
 from glob import glob
 from random import choice
-from utils import get_user_emo, get_keyboardimport, is_car
+from telegram import ReplyKeyboardRemove, ReplyKeyboardMarkup, ParseMode
+from telegram.ext import ConversationHandler
 
 import settings
+from utils import get_user_emo, get_keyboardimport, is_car
 
 def greet_user(bot, update, user_data):
     emo = emojize(choice(settings.USER_EMOJI), use_aliases=True)
@@ -67,3 +69,48 @@ def check_user_photo(bot, update, user_data):
     else:
         os.remove(filename)
         update.message.reply_text('Phhh... It is not a car!')
+
+def form_start(bot, update, user_data):
+    update.message.reply_text('What is your name?', 'Enter your name and surname', reply_markup=ReplyKeyboardRemove)
+    return 'name'
+
+def form_get_name(bot, update, user_data):
+    user_name = update.message.text
+    if len(user_name.split(' ')) != 2:
+        update.message.reply_text('Please, enter your name and surname')
+        return 'name'
+    else:
+        user_data['form_name'] = user_name
+        reply_keyboard = [['1','2','3','4','5']]
+
+        update.message.reply_text(
+            'Please, rate our bot form 1 to 5',
+            reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True)
+        )
+        return 'rating'
+
+def form_rating(bot, update, user_data):
+    user_data['form_rating'] = update.message.text
+    update.message.reply_text('Please, tell us what are you thinking about our bot')
+    return 'comment'
+
+def form_comment(bot, update, user_data):
+    user_data['form_comment'] = update.message.text
+    user_text = """
+<b>Name Surname:</b> {form_name}
+<b>Rating:</b> {form_rating}
+<b>Comment:</b> {form_comment}""".format(**user_data)
+    update.message.reply_text(user_text, reply_markup=get_keyboard(), parse_mode=ParseMode.HTML)
+
+    return ConversationHandler.END
+
+def form_skip_comment(bot, update, user_data):
+    user_text = """
+        <b>Name Surname:</b> {form_name}
+        <b>Rating:</b> {form_rating}""".format(**user_data)
+    update.message.reply_text(user_text, reply_markup=get_keyboard(), parse_mode=ParseMode.HTML)
+
+    return ConversationHandler.END
+
+def dunno(bot, update, user_data):
+    update.message.reply_text("I do not uderstand you")

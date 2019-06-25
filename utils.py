@@ -20,8 +20,9 @@ def get_keyboard():
     location_button = KeyboardButton('Send coordinates', request_location=True)
     my_keyboard = ReplyKeyboardMarkup(
                                         [
-                                            ['Send me a cool car', 'Change avatar']
-                                            [contact_button, location_button]
+                                            ['Send me a cool car', 'Change avatar'],
+                                            [contact_button, location_button],
+                                            ['Fill the form']
                                         ], resize_keyboard=True
                                     )
     return my_keyboard
@@ -37,6 +38,7 @@ def is_car(file_name):
             if concept['name'] == 'car':
                 image_has_car = True
     return image_has_car
+
 
 if __name__ == '__main__':
     print(is_car('images/images.jpeg'))
