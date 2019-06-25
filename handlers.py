@@ -3,8 +3,10 @@ import logging
 import os
 
 import ephem
+from emoji import emojize
 from glob import glob
 from random import choice
+
 from telegram import ReplyKeyboardRemove, ReplyKeyboardMarkup, ParseMode
 from telegram.ext import ConversationHandler
 
@@ -19,7 +21,7 @@ def greet_user(bot, update, user_data):
 
 def talk_to_me(bot, update, user_data):
     emo = get_user_emo(user_data)
-    user_text = "Hey, you {}! Did you say about my mama: {}?".format(update.message.chat.first_name, emo, update.message.text)
+    user_text = "Hey you, {}! Did you say about my mama: '{}'? {}".format(update.message.chat.first_name, update.message.text, emo)
     logging.info("User: %s, Chat id: %s, Message: %s", update.message.chat.username, 
                         update.message.chat.id, update.message.text)
     update.message.reply_text(user_text, reply_markup=get_keyboard())
@@ -45,23 +47,24 @@ def change_avatar(bot, update, user_data):
     if 'emo' in user_data:
         del user_data['emo']
     emo = get_user_emo(user_data)
-    update.message.reply_text('Done:'.format(emo), reply_markup=get_keyboard())
+    update.message.reply_text('Done! {}'.format(emo), reply_markup=get_keyboard())
 
 def get_contact(bot, update, user_data):
     print(update.message.contact)
     emo = get_user_emo(user_data)
-    update.message.reply_text('Done:'.format(emo), reply_markup=get_keyboard())
+    update.message.reply_text('Done! {}'.format(emo), reply_markup=get_keyboard())
 
-def get_location(bot, message, user_data):
+def get_location(bot, update, user_data):
     print(update.message.location)
     emo = get_user_emo(user_data)
-    update.message.reply_text('Done:'.format(emo), reply_markup=get_keyboard())
+    update.message.reply_text('Done! {}'.format(emo), reply_markup=get_keyboard())
 
 def check_user_photo(bot, update, user_data):
     update.message.reply_text('Checking photo')
     os.makedirs('downloads', exist_ok=True)
     photo_file = bot.getFile(update.message.photo[-1].file_id)
-    filename = os.path.join('downloads', '{}.jpg'.fotmat(photo_file.file_id))
+    filename = os.path.join('downloads', '{}.jpg'.format(photo_file.file_id))
+    photo_file.download(filename)
     if is_car(filename):
         update.message.reply_text('It is a car! It was added in storage')
         new_filename = os.path.join('images', 'car_{}.jpg'.format(photo_file.file_id))
