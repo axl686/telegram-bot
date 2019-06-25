@@ -23,7 +23,6 @@ def get_keyboard():
                                             ['Send me a cool car', 'Change avatar'],
                                             [contact_button, location_button],
                                             ['Fill the form']
-                                            [contact_button, location_button]
                                         ], resize_keyboard=True
                                     )
     return my_keyboard

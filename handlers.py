@@ -11,7 +11,7 @@ from telegram import ReplyKeyboardRemove, ReplyKeyboardMarkup, ParseMode
 from telegram.ext import ConversationHandler
 
 import settings
-from utils import get_user_emo, get_keyboardimport, is_car
+from utils import get_user_emo, get_keyboard, is_car
 
 def greet_user(bot, update, user_data):
     emo = emojize(choice(settings.USER_EMOJI), use_aliases=True)
@@ -74,7 +74,7 @@ def check_user_photo(bot, update, user_data):
         update.message.reply_text('Phhh... It is not a car!')
 
 def form_start(bot, update, user_data):
-    update.message.reply_text('What is your name?', 'Enter your name and surname', reply_markup=ReplyKeyboardRemove)
+    update.message.reply_text('What is your name? Enter your name and surname', reply_markup=ReplyKeyboardRemove())
     return 'name'
 
 def form_get_name(bot, update, user_data):

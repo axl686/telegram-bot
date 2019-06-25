@@ -18,10 +18,10 @@ def main():
     dp = mybot.dispatcher
 
     anketa = ConversationHandler(
-        entry_points[RegexHandler('^(Заполнить анкету)$', form_start, pass_user_data=True)],
-        states{
+        entry_points = [RegexHandler('^(Fill the form)$', form_start, pass_user_data=True)],
+        states = {
             'name': [MessageHandler(Filters.text, form_get_name, pass_user_data=True)],
-            'rating': [RegexHandler('^(1|2|3|4|5)$'), form_rating, pass_user_data=True],
+            'rating': [RegexHandler('^(1|2|3|4|5)$', form_rating, pass_user_data=True)],
             'comment': [MessageHandler(Filters.text, form_comment, pass_user_data=True),
                         CommandHandler('skip', form_skip_comment, pass_user_data=True)]
         },
