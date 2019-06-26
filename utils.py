@@ -20,9 +20,9 @@ def get_keyboard():
     location_button = KeyboardButton('Send coordinates', request_location=True)
     my_keyboard = ReplyKeyboardMarkup(
                                         [
-                                            ['Send me a cool car', 'Change avatar'],
+                                            ['send me a cool car', 'change avatar'],
                                             [contact_button, location_button],
-                                            ['Fill the form']
+                                            ['fill the form']
                                         ], resize_keyboard=True
                                     )
     return my_keyboard

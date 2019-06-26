@@ -9,8 +9,10 @@ from random import choice
 
 from telegram import ReplyKeyboardRemove, ReplyKeyboardMarkup, ParseMode
 from telegram.ext import ConversationHandler
+from telegram.ext import messagequeue as mq
 
 import settings
+from bot import subscribers
 from utils import get_user_emo, get_keyboard, is_car
 
 def greet_user(bot, update, user_data):
@@ -117,3 +119,31 @@ def form_skip_comment(bot, update, user_data):
 
 def dunno(bot, update, user_data):
     update.message.reply_text("I do not uderstand you")
+
+def subscribe(bot, update):
+    subscribers.add(update.message.chat_id)
+    update.message.reply_text('You was subscribed')
+    print(subscribers)
+
+@mq.queuedmessage
+def send_updates(bot, job):
+    for chat_id in subscribers:
+        bot.sendMessage(chat_id=chat_id, text='Lovely Spam! Wonderful Spam!')
+
+def unsubscribe(bot, update):
+    if update.message.chat_id in subscribers:
+        subscribers.remove(update.message.chat_id)
+        update.message.reply_text('You was unsubscribed')
+    else:
+        update.message.reply_text('You are not in subscribers! Enter /subscribe to subscribe')
+
+def set_alarm(bot, update, args, job_queue):
+    try:
+        seconds = abs(int(args[0]))
+        job_queue.run_once(alarm, seconds, context=update.message.chat_id)
+    except(IndexError, ValueError):
+        update.message.reply_text('Enter time in seconds after /alarm')
+
+@mq.queuedmessage
+def alarm(bot, job):
+    bot.sendMessage(chat_id=job.context, text='Alarm!!!')
