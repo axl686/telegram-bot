@@ -26,7 +26,7 @@ def main():
     #learn1_axl_bot
     mybot = Updater(settings.API_KEY, request_kwargs=settings.PROXY)
     mybot.bot._msg_queue = mq.MessageQueue()
-    mybot.bot._is_message_queued_default = True
+    mybot.bot._is_messages_queued_default = True
 
     logging.info('Bot starting')
 
@@ -35,7 +35,7 @@ def main():
     mybot.job_queue.run_repeating(send_updates, interval=5) #interval in seconds
 
     anketa = ConversationHandler(
-        entry_points = [RegexHandler('^(Fill the form)$', form_start, pass_user_data=True)],
+        entry_points = [RegexHandler('^(fill the form)$', form_start, pass_user_data=True)],
         states = {
             'name': [MessageHandler(Filters.text, form_get_name, pass_user_data=True)],
             'rating': [RegexHandler('^(1|2|3|4|5)$', form_rating, pass_user_data=True)],
