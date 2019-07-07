@@ -29,7 +29,7 @@ def talk_to_me(bot, update, user_data):
     update.message.reply_text(user_text, reply_markup=get_keyboard())
 
 def get_const_planet(bot, update, user_data):
-    planet = split(text)[1]
+    planet = text.split()[1]
     print(text)
     print(planet)
     planets_list = [name for _0, _1, name in ephem._libastro.builtin_planets()]
